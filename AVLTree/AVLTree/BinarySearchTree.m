@@ -151,6 +151,14 @@
     [self preOrderTraversalNode:_root block:block stop:&stop];
 }
 
+- (void)preOrderTraversalUsingBlock1:(void (^)(id obj, BOOL *stop))block
+{
+    if (!block) return;
+    BOOL stop = NO;
+    TreeNode *tempNode = _root;
+    [self preOrderTraversalNode1:tempNode block:block stop:&stop];
+}
+
 - (void)inOrderTraversalUsingBlock:(void (^)(id obj, BOOL *stop))block
 {
     if (!block) return;
@@ -158,11 +166,27 @@
     [self inOrderTraversalNode:_root block:block stop:&stop];
 }
 
+- (void)inOrderTraversalUsingBlock1:(void (^)(id obj, BOOL *stop))block
+{
+    if (!block) return;
+    BOOL stop = NO;
+    TreeNode *temp = _root;
+    [self inOrderTraversalNode1:temp block:block stop:&stop];
+}
+
 - (void)postOrderTraversalUsingBlock:(void (^)(id obj, BOOL *stop))block
 {
     if (!block) return;
     BOOL stop = NO;
     [self postOrderTraversalNode:_root block:block stop:&stop];
+}
+
+- (void)postOrderTraversalUsingBlock1:(void (^)(id obj, BOOL *stop))block
+{
+    if (!block) return;
+    BOOL stop = NO;
+    TreeNode *tempNode = _root;
+    [self postOrderTraversalNode1:tempNode block:block stop:&stop];
 }
 
 - (void)levelOrderTraversalUsingBlock:(void (^)(id obj, BOOL *stop))block
@@ -182,6 +206,47 @@
     
 }
 
+
+- (void)preOrderTraversalNode1:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop
+{
+    
+    NSMutableArray *stack = [NSMutableArray array];
+//    while (node != nil || stack.count) {
+//        block(node.element,stop);
+//        if (*stop) {
+//            return;
+//        }
+//        if (node.right) {
+//            [stack addObject:node.right];
+//        }
+//        if (node.left) {
+//            node = node.left;
+//        } else {
+//            TreeNode *next = [stack lastObject];
+//            [stack removeLastObject];
+//            node = next;
+//        }
+//    }
+    while (node != nil || stack.count) {
+        if (node) {
+            block(node.element,stop);
+        }
+        if (*stop) {
+            return;
+        }
+        if (node) {
+            [stack addObject:node];
+        }
+        if (node.left) {
+            node = node.left;
+        } else {
+            TreeNode *next = [stack lastObject];
+            [stack removeLastObject];
+            node = next.right;
+        }
+    }
+}
+
 - (void)inOrderTraversalNode:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop
 {
     if (!node) return;
@@ -192,6 +257,30 @@
     
 }
 
+- (void)inOrderTraversalNode1:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop
+{
+    NSMutableArray *stack = [NSMutableArray array];
+    while (node != nil || stack.count) {
+        
+        if (*stop) {
+            return;
+        }
+        if (node) {
+            [stack addObject:node];
+        }
+        if (node.left) {
+            node = node.left;
+        } else {
+            TreeNode *next = [stack lastObject];
+            [stack removeLastObject];
+            if (next) {
+                block(next.element,stop);
+            }
+            node = next.right;
+        }
+    }
+}
+
 
 - (void)postOrderTraversalNode:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop
 {
@@ -200,6 +289,36 @@
     [self postOrderTraversalNode:node.right block:block stop:stop];
     if (*stop) return;
     block(node.element,stop);
+}
+
+- (void)postOrderTraversalNode1:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop
+{
+    if (!node) return;
+    TreeNode *lastVisited = nil;
+    NSMutableArray *stack = [NSMutableArray array];
+
+    //将node移到最左边
+    while (node) {
+        [stack addObject:node];
+        node = node.left;
+    }
+    while (stack.count) {
+        node = [stack lastObject];
+        //如果右子树为空或者已经访问过，则访问自己，否则继续访问右子树
+        if (node.right == nil || lastVisited == node.right) {
+            block(node.element,stop);
+            if (*stop) return;
+            lastVisited = node;
+            [stack removeLastObject];
+        } else {
+            //将node移到右子树最左边
+            node = node.right;
+            while (node) {
+                [stack addObject:node];
+                node = node.left;
+            }
+        }
+    }
 }
 
 - (void)levelOrderTraversalNode:(TreeNode *)node block:(void (^)(id obj, BOOL *stop))block stop:(BOOL *)stop

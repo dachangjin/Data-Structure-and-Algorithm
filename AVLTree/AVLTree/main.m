@@ -33,12 +33,17 @@ int main(int argc, const char * argv[]) {
                 return 0;
             }
         }];
-        for (int i = 0; i < 1000; i ++) {
-            NSNumber *number = [NSNumber numberWithInt:arc4random() % 1000];
+        for (int i = 0; i < 100; i ++) {
+            NSNumber *number = [NSNumber numberWithInt:arc4random() % 100];
             [tree1 add:number];
             [tree2 add:number];
         }
-        [tree1 inOrderTraversalUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [tree1 postOrderTraversalUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+            NSNumber *num = obj;
+            NSLog(@"%@",num);
+        }];
+        NSLog(@"~~~~~~~~~~~~~~~~~~~~~~~");
+        [tree1 postOrderTraversalUsingBlock1:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
             NSNumber *num = obj;
             NSLog(@"%@",num);
         }];
