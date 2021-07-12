@@ -4,6 +4,9 @@
 
 ## Build generated
 build/
+*/build/
+.build/
+*/Build
 DerivedData/
 
 ## Various settings
